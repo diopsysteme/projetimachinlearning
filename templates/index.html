@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Système de Détection d'Intrusions IoT</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+      background: white;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+    h1, h2, h3, h4 {
+      color: #0056b3;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .control-panel {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      margin: 30px 0;
+      color: white;
+    }
+
+    .start-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+
+    .start-btn:hover {
+      background: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+
+    .start-btn:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .note, .analysis, .objectives, footer {
+      background: #f8f9fa;
+      padding: 20px;
+      margin: 25px 0;
+      border-left: 5px solid #007bff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .results-section {
+      background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+      padding: 25px;
+      border-radius: 12px;
+      margin: 25px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 15px;
+      border: 1px solid #dee2e6;
+      text-align: left;
+    }
+
+    th {
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+
+    tr:hover {
+      background: #e3f2fd;
+      transition: background 0.3s ease;
+    }
+
+    .graph {
+      margin: 25px 0;
+      text-align: center;
+    }
+
+    .graph img {
+      max-width: 100%;
+      border: 1px solid #dee2e6;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .graph img:hover {
+      transform: scale(1.02);
+    }
+
+    ul, ol {
+      margin-left: 20px;
+      line-height: 1.8;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 14px;
+      border-top: 2px solid #007bff;
+      
+    }
+
+    .loading {
+      text-align: center;
+      padding: 50px;
+    }
+
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007bff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .code-explanation {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 5px solid #28a745;
+      margin: 20px 0;
+    }
+
+    .highlight {
+      background: #fff3cd;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+    }
+
+    .step-box {
+      background: linear-gradient(135deg, #e8f5e8, #f0f8ff);
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border-left: 4px solid #28a745;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Système de Détection d'Intrusions IoT</h1>
+
+    <div class="note">
+      <strong>📊 Détection automatique des cyber-attaques</strong><br>
+      Utilisation de l'Intelligence Artificielle pour identifier les attaques Mirai et Gafgyt dans les réseaux d'objets connectés (IoT).
+    </div>
+
+    <!-- Panneau de contrôle -->
+    <div class="control-panel">
+      <h2>🚀 Lancement de l'Analyse</h2>
+      <p>Cliquez sur le bouton ci-dessous pour démarrer l'entraînement des modèles IA</p>
+      <button id="startBtn" class="start-btn" onclick="startProcessing()">
+        ▶️ Démarrer l'Analyse
+      </button>
+      <div id="status-message" style="margin-top: 15px; font-weight: bold;"></div>
+    </div>
+
+    <!-- Section des résultats -->
+    <div id="results-container" style="display: none;">
+      <div class="results-section">
+        <h2>📈 Résultats des Modèles IA</h2>
+        <table id="results-table">
+          <thead>
+            <tr>
+              <th>🤖 Modèle</th>
+              <th>🎯 Précision</th>
+              <th>📊 Score F1</th>
+            </tr>
+          </thead>
+          <tbody id="results-body">
+          </tbody>
+        </table>
+
+        <h2>📊 Visualisations des Performances</h2>
+        <div class="graph">
+          <h3>📈 Comparaison de la Précision</h3>
+          <img src="/static/images/accuracy_comparison.png" alt="Comparaison Précision">
+        </div>
+        
+        <div class="graph">
+          <h3>🎯 Comparaison du Score F1</h3>
+          <img src="/static/images/f1_comparison.png" alt="Comparaison F1">
+        </div>
+        
+        <div class="graph">
+          <h3>🔍 Importance des Caractéristiques</h3>
+          <img src="/static/images/feature_importance.png" alt="Importance Features">
+        </div>
+        
+        <div class="graph">
+          <h3>📋 Matrice de Confusion - Meilleur Modèle</h3>
+          <img src="/static/images/all_confusion_matrices.png" alt="Matrice Confusion">
+        </div>
+
+        <h2>🔍 Matrices de Confusion Détaillées</h2>
+        <div class="graph">
+          <h4>🌲 Random Forest</h4>
+          <img src="/static/images/cm_Random_Forest.png" alt="Random Forest">
+        </div>
+        
+        <div class="graph">
+          <h4>⚡ Random Forest Optimisé</h4>
+          <img src="/static/images/cm_Random_Forest_Optimise.png" alt="Random Forest Optimisé">
+        </div>
+        
+        <div class="graph">
+          <h4>💠 SVM (Support Vector Machine)</h4>
+          <img src="/static/images/cm_SVM.png" alt="SVM">
+        </div>
+        
+        <div class="graph">
+          <h4>📉 Régression Logistique</h4>
+          <img src="/static/images/cm_Logistic_Regression.png" alt="Logistic Regression">
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenu informatif toujours visible -->
+    <div class="objectives">
+      <h2>🎯 Objectif Détaillé du TP</h2>
+      <p>
+        Ce travail pratique vise à développer un <strong>système intelligent de cybersécurité</strong> capable de détecter automatiquement les intrusions dans les réseaux IoT. Il s'agit d'une problématique cruciale car :
+      </p>
+      
+      <div class="step-box">
+        <h4>🌐 Contexte des Objets Connectés</h4>
+        <p>Les objets connectés (IoT) sont partout : caméras de sécurité, thermostats intelligents, réfrigérateurs connectés, montres intelligentes, etc. Ces appareils sont souvent vulnérables car ils ont peu de sécurité intégrée.</p>
+      </div>
+
+      <div class="step-box">
+        <h4>⚠️ Les Menaces Ciblées</h4>
+        <ul>
+          <li><strong>Attaque Mirai</strong> : Transforme les appareils IoT en "zombies" pour créer des réseaux de machines compromises (botnets)</li>
+          <li><strong>Attaque Gafgyt</strong> : Similaire à Mirai, exploite les mots de passe par défaut des appareils IoT</li>
+          <li><strong>Trafic Normal (Benign)</strong> : Communications légitimes entre appareils</li>
+        </ul>
+      </div>
+
+      <div class="step-box">
+        <h4>🤖 Solution par Intelligence Artificielle</h4>
+        <p>Nous utilisons des <strong>algorithmes de Machine Learning</strong> pour apprendre à distinguer automatiquement le trafic normal des attaques en analysant les caractéristiques du trafic réseau.</p>
+      </div>
+
+      <h2>📘 Modèles IA Utilisés</h2>
+
+      <div class="step-box">
+        <h3>🌲 Random Forest (Forêt Aléatoire)</h3>
+        <p><strong>Principe :</strong> Combine plusieurs arbres de décision pour prendre une décision collective.</p>
+        <p><strong>Avantages :</strong> Très efficace sur des données complexes, résistant au surajustement.</p>
+        <p><strong>Utilisation :</strong> Excellent pour la détection d'intrusions car il peut capturer des patterns complexes.</p>
+      </div>
+
+      <div class="step-box">
+        <h3>💠 SVM (Support Vector Machine)</h3>
+        <p><strong>Principe :</strong> Trouve la meilleure frontière pour séparer les différentes classes de données.</p>
+        <p><strong>Avantages :</strong> Très performant quand les données sont bien séparables.</p>
+        <p><strong>Utilisation :</strong> Idéal pour classifier les types d'attaques avec précision.</p>
+      </div>
+
+      <div class="step-box">
+        <h3>📉 Régression Logistique</h3>
+        <p><strong>Principe :</strong> Utilise des probabilités pour classifier les données.</p>
+        <p><strong>Avantages :</strong> Simple, rapide et interprétable.</p>
+        <p><strong>Utilisation :</strong> Baseline efficace pour la détection binaire (normal/attaque).</p>
+      </div>
+
+      <h2>⚙️ Optimisation Avancée</h2>
+      <div class="step-box">
+        <p>Nous utilisons <span class="highlight">GridSearchCV</span> pour optimiser automatiquement les paramètres du Random Forest :</p>
+        <ul>
+          <li><strong>n_estimators</strong> : Nombre d'arbres dans la forêt (100, 200, 300)</li>
+          <li><strong>max_depth</strong> : Profondeur maximale des arbres (10, 15, 20)</li>
+          <li><strong>min_samples_split</strong> : Minimum d'échantillons pour diviser un nœud (2, 5, 10)</li>
+        </ul>
+        <p>Cette optimisation permet d'améliorer significativement les performances du modèle.</p>
+      </div>
+
+      <h2>🔁 Étapes Détaillées du Processus</h2>
+      <ol>
+        <li class="step-box"><strong>Génération des Données</strong> : Simulation de 10,000 connexions IoT avec caractéristiques réalistes</li>
+        <li class="step-box"><strong>Étiquetage Intelligent</strong> : Attribution des labels Benign (60%), Mirai (25%), Gafgyt (15%)</li>
+        <li class="step-box"><strong>Injection d'Anomalies</strong> : Modification des données pour simuler les signatures d'attaques</li>
+        <li class="step-box"><strong>Prétraitement</strong> : Normalisation des données avec StandardScaler</li>
+        <li class="step-box"><strong>Division Train/Test</strong> : 80% pour l'entraînement, 20% pour les tests</li>
+        <li class="step-box"><strong>Entraînement Multi-Modèles</strong> : Formation parallèle des 3 algorithmes</li>
+        <li class="step-box"><strong>Évaluation Complète</strong> : Calcul de la précision, F1-score, matrices de confusion</li>
+        <li class="step-box"><strong>Optimisation</strong> : GridSearch sur le meilleur modèle</li>
+        <li class="step-box"><strong>Visualisation</strong> : Génération automatique des graphiques d'analyse</li>
+      </ol>
+
+      <h2>🔒 Impact sur la Cybersécurité</h2>
+      <div class="step-box">
+        <p>
+          Les attaques comme <strong>Mirai</strong> ont déjà compromis des millions d'appareils IoT, créant des botnets capables de :
+        </p>
+        <ul>
+          <li>🔴 Lancer des attaques DDoS massives</li>
+          <li>🔴 Voler des données personnelles</li>
+          <li>🔴 Espionner les utilisateurs</li>
+          <li>🔴 Propager d'autres malwares</li>
+        </ul>
+        <p>
+          Ce TP démontre comment l'<strong>IA peut automatiser la détection</strong> de ces menaces en temps réel, 
+          permettant une réponse rapide et efficace.
+        </p>
+      </div>
+
+     
+
+      <div class="code-explanation">
+        <h3>🌐 Interface Web Flask</h3>
+        <p>Architecture de l'application web :</p>
+        <ul>
+          <li><span class="highlight">@app.route("/")</span> : Page principale avec interface utilisateur</li>
+          <li><span class="highlight">@app.route("/start_processing")</span> : Endpoint pour lancer l'analyse</li>
+          <li><span class="highlight">@app.route("/status")</span> : Vérification de l'état du traitement</li>
+          <li><span class="highlight">render_template()</span> : Rendu dynamique du HTML</li>
+        </ul>
+      </div>
+
+    
+
+      
+    </div>
+
+    <footer>
+      <p><strong>🎓 Réalisé dans le cadre du TP Machine Learning & Cybersécurité - Détection d'Intrusions IoT</strong></p>
+      <p>💡 Ce projet démontre l'application concrète de l'IA pour renforcer la cybersécurité des objets connectés</p>
+    </footer>
+  </div>
+
+  <script>
+    let processing = false;
+
+    function startProcessing() {
+      if (processing) return;
+      
+      processing = true;
+      const startBtn = document.getElementById('startBtn');
+      const statusMsg = document.getElementById('status-message');
+      
+      startBtn.disabled = true;
+      startBtn.innerHTML = '⏳ Traitement en cours...';
+      statusMsg.innerHTML = '🔄 Entraînement des modèles IA en cours...';
+      
+      // Démarrer le traitement
+      fetch('/start_processing')
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'completed') {
+            // Afficher les résultats
+            displayResults(data.results);
+            statusMsg.innerHTML = '✅ Analyse terminée avec succès !';
+            startBtn.innerHTML = '✅ Analyse Terminée';
+            
+            // Faire défiler vers les résultats
+            document.getElementById('results-container').scrollIntoView({ 
+              behavior: 'smooth' 
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+          statusMsg.innerHTML = '❌ Erreur lors du traitement';
+          startBtn.disabled = false;
+          startBtn.innerHTML = '▶️ Démarrer l\'Analyse';
+          processing = false;
+        });
+    }
+
+    function displayResults(results) {
+      const container = document.getElementById('results-container');
+      const tbody = document.getElementById('results-body');
+      
+      // Vider le tableau
+      tbody.innerHTML = '';
+      
+      // Remplir avec les résultats
+      results.forEach(result => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${result.Model}</strong></td>
+          <td><span style="color: #28a745; font-weight: bold;">${(result.Accuracy * 100).toFixed(2)}%</span></td>
+          <td><span style="color: #007bff; font-weight: bold;">${result['F1-Score'].toFixed(3)}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+      
+      // Afficher la section des résultats
+      container.style.display = 'block';
+    }
+
+    // Vérification périodique du statut (optionnel)
+    function checkStatus() {
+      if (!processing) return;
+      
+      fetch('/status')
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'completed') {
+            processing = false;
+          }
+        });
+    }
+
+    // Vérifier le statut toutes les 2 secondes si en cours de traitement
+    setInterval(checkStatus, 2000);
+  </script>
+</body>
+</html>
