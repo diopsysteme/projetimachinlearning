@@ -3,6 +3,7 @@
 ## 📋 Description
 
 Ce projet implémente un **système intelligent de cybersécurité** utilisant des algorithmes de Machine Learning pour détecter automatiquement les intrusions dans les réseaux d'objets connectés (IoT). Le système est capable d'identifier les attaques **Mirai** et **Gafgyt**, deux des principales menaces ciblant les appareils IoT.
+  ### LIEN EN LIGNE  https://projetia-lcfq.onrender.com/ & SUR DOCKERHUB https://hub.docker.com/repository/docker/diopsysteme/projetia/
 
 ### 🎯 Objectifs
 - Détection automatique des cyber-attaques IoT en temps réel
